@@ -14,6 +14,11 @@ input.
 -initial and finals states must be included in states
 -blank must be included in alphabet
 -cannot have 2 read statement for the same char in the same state
+-make sure every state (finals excluded) has transitions
+
+
+(error raising)
+-if transition does not exists
 
 ################################################################################
 ################################################################################
