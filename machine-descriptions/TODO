@@ -1,5 +1,26 @@
+Things the machine itself should check:
+(from subject)
+-Your program must detect and reject ill formated or invalid machine descriptions
+and inputs, with a relevant error message. This means that your program must
+never crash for any reason.
+-blank: The blank character, must be part of the alphabet, must NOT be part of the
+input.
+
+(more parsing check stuff)
+-make sure read/write statements use only stuff from "alphabet"
+-make sure "to_state" statements use only stuff from "states"
+-action can only be RIGHT or LEFT
+-at least one HALT statement must be present in a to_state statement
+-initial and finals states must be included in states
+-blank must be included in alphabet
+-cannot have 2 read statement for the same char in the same state
+
+################################################################################
+################################################################################
+
 1. A machine able to compute an unary addition.
 
+(starts at the first 1 like in the video of unary sub)
 -> (step 1) go right until you meet a 1 or = 
 		if 1
 			change it to blank
@@ -9,6 +30,13 @@
 			(go back to step 1)
 		if =
 			we're done
+
+
+
+bug:
+program is not protected against 11+11=1, it would produce false result 11111
+protection would require making a separate set of state to handle first pass (remove anything after the = )
+check for this before running machine description ? how
 
 ################################################################################
 ################################################################################
@@ -80,6 +108,9 @@ tape.
 -> like palindrome but remove 0 by pair,
 	if string empty when attempting to remove first of pair, true
 	if string empty when attempting to remove second of pair, false
+since there is only one char to test for, it can be done in one pass rather than
+having to get to each end like palindrome
+
 
 ################################################################################
 ################################################################################

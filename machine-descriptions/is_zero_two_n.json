@@ -1,0 +1,19 @@
+{
+	"name" : "is_zero_two_n",
+	"alphabet": [ ".", "0"],
+	"blank" : ".",
+	"states" : [ "get_first", "get_second",  "HALT" ],
+	"initial" : "get_first",
+	"finals" : [ "HALT" ],
+	"transitions" : {
+		"get_first": [
+			{ "read" : ".", "to_state": "HALT", "write": "y", "action": "LEFT"},
+			{ "read" : "0", "to_state": "get_second", "write": ".", "action": "RIGHT"}
+		],
+		"get_second":
+		[
+			{ "read" : ".", "to_state": "HALT", "write": "n", "action": "LEFT"},
+			{ "read" : "0", "to_state": "get_first", "write": ".", "action": "RIGHT"}
+		]
+	}
+}
