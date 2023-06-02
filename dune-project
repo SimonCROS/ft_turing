@@ -18,7 +18,16 @@
 (package
  (name ft_turing)
  (synopsis "Introduction to the Turing model.")
- (description "ft_turing will introduce you to the Turing model at the base of the imperative paradigm through an implementation of this model in OCaml.")
- (depends ocaml dune)
+ (description
+  "ft_turing will introduce you to the Turing model at the base of the imperative paradigm through an implementation of this model in OCaml.")
+ (depends
+  ocaml
+  dune
+  (core
+   (>= 0.15.1))
+  (yojson
+   (>= 2.1.0)))
  (tags
-  ("Theoretical model of the Turing machine" "State Machines" "Awareness of computability and complexity")))
+  ("Theoretical model of the Turing machine"
+   "State Machines"
+   "Awareness of computability and complexity")))

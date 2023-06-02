@@ -17,6 +17,8 @@ bug-reports: "https://github.com/SimonCROS/ft_turing/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.7"}
+  "core" {>= "0.15.1"}
+  "yojson" {>= "2.1.0"}
   "odoc" {with-doc}
 ]
 build: [
