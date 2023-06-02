@@ -1,5 +1,5 @@
 {
-	"name" : "is_zero_two_n",
+	"name" : "is_02n",
 	"alphabet": [ ".", "0"],
 	"blank" : ".",
 	"states" : [ "get_first", "get_second",  "HALT" ],
