@@ -1,7 +1,5 @@
-open Yojson.Basic.Util
-
 let get_name_value json =
-  let name = member "name" json |> to_string in
+  let name = Yojson.Basic.Util.member "name" json |> Yojson.Basic.Util.to_string in
   name
 
 let () =
