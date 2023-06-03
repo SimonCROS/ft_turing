@@ -26,7 +26,9 @@
   (core
    (>= 0.15.1))
   (yojson
-   (>= 2.1.0)))
+   (>= 2.1.0))
+  (ppx_deriving_yojson
+   (>= 3.7.0)))
  (tags
   ("Theoretical model of the Turing machine"
    "State Machines"
