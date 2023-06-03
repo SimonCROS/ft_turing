@@ -11,15 +11,15 @@
 
 (maintainers "Simon Cros" "Karim Zennoune")
 
-(license LICENSE)
+(license MIT)
 
 (documentation https://github.com/SimonCROS/ft_turing)
 
 (package
  (name ft_turing)
- (synopsis "Introduction to the Turing model.")
+ (synopsis "Introduction to the Turing model")
  (description
-  "ft_turing will introduce you to the Turing model at the base of the imperative paradigm through an implementation of this model in OCaml.")
+  "Introduction to the Turing model\nft_turing will introduce you to the Turing model at the base of the imperative paradigm through an implementation of this model in OCaml.")
  (depends
   ocaml
   dune
