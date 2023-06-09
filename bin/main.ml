@@ -11,7 +11,7 @@ type machine =
  states : string list;
  initial : string;
  finals : string list;
- transitions : Yojson.Safe.t} [@@deriving of_yojson]
+ transitions : (string * [`Null]) list } [@@deriving of_yojson]
 
 let () =
   if Array.length Sys.argv != 2 then begin
@@ -24,17 +24,16 @@ let () =
     let json = Yojson.Safe.from_channel ic in
     close_in ic;
 
-    let machine = match machine_of_yojson json with
-    | Ok data -> data;
-    | Error err -> failwith ("Invalid machine : parsing failed for " ^ err);
-    in
+    let () = Format.printf "Parsed to %a" Yojson.Safe.pp json in
+
+    let machine = machine_of_yojson json in
 
     Format.printf "Machine name : %s\n" machine.name;
     Format.printf "Machine alphabet :";
     List.iter (Format.printf " `%c`") machine.alphabet;
     Format.printf "\n";
 
-    Format.printf "Machine transitions : %a" Yojson.Safe.pp machine.transitions;
+    let () = List.iter (fun (l, r) -> Format.printf "%s -> %d" l (String.length r)) machine.transitions in
 
     flush stdout;
   with e ->
