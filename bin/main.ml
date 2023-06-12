@@ -1,11 +1,11 @@
-(* type transition =
+type transition =
 {read : char;
  to_state : string;
  write : char;
- action : string} [@@deriving of_yojson] *)
+ action : string} [@@deriving of_yojson]
 
 (* type t_list = (string * (transition list))[@@deriving of_yojson] *)
-
+type hashtable_of_transition = ((string, transition list) Hashtbl.t) [@@deriving of_yojson]
 
 type machine =
 {name : string;
@@ -15,13 +15,18 @@ type machine =
  initial : string;
  finals : string list;
 
- (* transitions: Assoc ( string * (transition list)) list; *)
+ (* transitions:((string, transition list) Hashtbl.t); [@to_yojson transition_of_yojson_lookup] *)
  
- } [@@deriving of_yojson] [@@yojson.allow_extra_fields]
+
+ transitions:hashtable_of_transition; [@to_yojson transition_of_yojson_lookup]
+
+ } [@@deriving of_yojson] 
+ (* [@@yojson.allow_extra_fields] *)
  
  (* 
  transitions is    assoc of (string) and (transition list)
- 
+
+ test: ((int, kgram list) Hashtbl.t) [@to_yojson yojson_of_kgram_lookup];
  
  (* transitions: (string * string) list; *)
   (* transitions: t_list; *)
@@ -34,6 +39,22 @@ type machine =
 let person = `Assoc [ ("name", `String "Anil") ];;
 val person : [> `Assoc of (string * [> `String of string ]) list ] =
   `Assoc [("name", `String "Anil")]
+
+
+
+  type t = (csvar, abs_state) Map.t
+  and csvar = location * context
+  and location = int
+  and context = [`Top]
+  and abs_state = [`Dead | `State of (cvar, abs_val) Map.t]
+  and cvar = string
+  and abs_val = [`Int of int | `Addr of cvar Set.t | `Top]
+  [@@deriving to_yojson]
+
+
+
+
+
 
 
 
