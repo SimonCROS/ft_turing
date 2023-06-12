@@ -4,9 +4,6 @@
 	"blank" : ".",
 	"states" : [ "scanright", "eraseone", "subone", "skip", "HALT" ],
 	"initial" : "scanright",
-	"finals" : [ "HALT" ],
-	"transitions" : {
-		"scanright": "aaa",
-		"eraseone": "bbbbbb"
-	}
+	"finals" : [ "HALT" ]
+
 }
