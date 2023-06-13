@@ -1,11 +1,27 @@
-type transition =
+(* type transition =
 {read : char;
  to_state : string;
  write : char;
- action : string} [@@deriving of_yojson]
+ action : string} [@@deriving of_yojson] *)
 
 (* type t_list = (string * (transition list))[@@deriving of_yojson] *)
-type hashtable_of_transition = ((string, transition list) Hashtbl.t) [@@deriving of_yojson]
+(* type hashtable_of_transition = ((string, transition list) Hashtbl.t) [@@deriving of_yojson] *)
+(* type t [@@deriving of_yojson] *)
+
+(* type 'a t = T of string * 'a t list [@@deriving yojson] *)
+
+(* type dict = (string * string) list [@@deriving yojson] *)
+(** Key/value dictionary *)
+
+
+(* module TransmitionModule = struct
+  type transi = {read : char;  to_state : string;  write : char;  action : string}[@@deriving yojson]
+  type transition_list = (transi list)[@@deriving yojson]
+  type transi_full = (string * transition_list) list [@@deriving yojson]
+  (* type message_response = { message: string }[@@deriving yojson] *)
+end *)
+
+(* type my_type = (string , (transition list)) Hashtbl.t [@of_yojson transition_of_yojson_lookup] [@@deriving of_yojson] *)
 
 type machine =
 {name : string;
@@ -14,11 +30,11 @@ type machine =
  states : string list;
  initial : string;
  finals : string list;
-
- (* transitions:((string, transition list) Hashtbl.t); [@to_yojson transition_of_yojson_lookup] *)
- 
-
- transitions:hashtable_of_transition; [@to_yojson transition_of_yojson_lookup]
+ (* transitions: (string * (transition list)) list; [@of_yojson transition_of_yojson_lookup] *)
+ transitions:(string * string) Utils.Hashtbl.t ; 
+ (* transitions: TransmitionModule.transi_full; *)
+(* transitions: (string * string) list; *)
+ (* transitions:hashtable_of_transition; [@to_yojson transition_of_yojson_lookup] *)
 
  } [@@deriving of_yojson] 
  (* [@@yojson.allow_extra_fields] *)
@@ -129,3 +145,24 @@ let () =
     flush stdout;
   with e ->
     raise e;
+
+
+    (* 
+       
+    from ppx_yojson_conv_lib 
+
+(** [hashtbl_of_yojson conv_key conv_value yojson] converts Yojson
+    [yojson] to a value of type [('a, 'b) Hashtbl.t] using conversion
+    function [conv_key], which converts an Yojson to hashtable
+    key of type ['a], and function [conv_value], which converts an
+    Yojson to hashtable value of type ['b]. *)
+val hashtbl_of_yojson
+  :  (Yojson.Safe.t -> 'a)
+  -> (Yojson.Safe.t -> 'b)
+  -> Yojson.Safe.t
+  -> ('a, 'b) Hashtbl.t
+    
+    
+    
+    
+    *)

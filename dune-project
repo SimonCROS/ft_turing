@@ -28,7 +28,11 @@
   (yojson
    (>= 2.1.0))
   (ppx_yojson_conv
-   (>= 0.12.0)))
+   (>= 0.12.0))
+   ppx_import ppx_deriving ppx_hash
+   
+   
+   )
  (tags
   ("Theoretical model of the Turing machine"
    "State Machines"
