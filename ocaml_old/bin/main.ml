@@ -1,8 +1,8 @@
-(* type transition =
+type transition =
 {read : char;
  to_state : string;
  write : char;
- action : string} [@@deriving of_yojson] *)
+ action : string} [@@deriving of_yojson]
 
 type machine =
 {name : string;

@@ -1,3 +1,11 @@
+pub mod machine_parser;
+
 fn main() {
-    println!("Hello, world!");
+
+    let result = machine_parser::typed_example();
+
+    match result {
+        Ok(_) => (),
+        Err(error) => print!("{}", error),
+    }
 }
