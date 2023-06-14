@@ -1,8 +1,8 @@
-type transition =
+(* type transition =
 {read : char;
  to_state : string;
  write : char;
- action : string} [@@deriving of_yojson]
+ action : string} [@@deriving of_yojson] *)
 
 type machine =
 {name : string;
@@ -12,6 +12,10 @@ type machine =
  initial : string;
  finals : string list;
  transitions : Yojson.Safe.t} [@@deriving of_yojson]
+
+
+let test = Parse.allo;
+
 
 let () =
   if Array.length Sys.argv != 2 then begin
@@ -29,10 +33,22 @@ let () =
     | Error err -> failwith ("Invalid machine : parsing failed for " ^ err);
     in
 
+
     Format.printf "Machine name : %s\n" machine.name;
     Format.printf "Machine alphabet :";
     List.iter (Format.printf " `%c`") machine.alphabet;
     Format.printf "\n";
+    Format.printf "Machine blank char : %c\n" machine.blank;
+    
+    Format.printf "Machine states :";
+    List.iter (Format.printf " `%s`") machine.states;
+    
+    Format.printf "Machine initial state : %s\n" machine.initial;
+
+
+    Format.printf "Machine finals :";
+    List.iter (Format.printf " `%s`") machine.finals;
+
 
     Format.printf "Machine transitions : %a" Yojson.Safe.pp machine.transitions;
 
