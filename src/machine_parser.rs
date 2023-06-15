@@ -221,11 +221,11 @@ pub fn machine_checker(m: &Machine) -> Option<&'static str> {
             }
 
             //write
-            if m.alphabet.iter().position(|x| x == &item.write) == None
-            {
-                println!("statement wirte [{}] from [{}] read [{}] is not part of alphabet", item.write, key, item.read);
-                return Some("Machine logic check error");      
-            }
+            // if m.alphabet.iter().position(|x| x == &item.write) == None
+            // {
+            //     println!("statement wirte [{}] from [{}] read [{}] is not part of alphabet", item.write, key, item.read);
+            //     return Some("Machine logic check error");      
+            // }
         } //end for item in value.iter()
         
         
@@ -243,6 +243,10 @@ pub fn machine_checker(m: &Machine) -> Option<&'static str> {
     // -cannot have 2 read statement for the same char in the same state
     // println!("in transition [{}] there is multiple statement for read [{}]", key, item.read);
     // return Some("Machine logic check error");  
+
+    // -make sure each transition block only appear once (check hashmap for duplicate key)
+
+
     //END TODO   
 
 

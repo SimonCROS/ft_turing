@@ -30,7 +30,7 @@
                 "go_end_R_y", "check_last_R_y", "go_end_L_y", "check_last_L_y",
                 "go_end_R_z", "check_last_R_z", "go_end_L_z", "check_last_L_z",
                 "HALT" ],
-	"initial" : "get_zero",
+	"initial" : "acquire_new_letter_R",
 	"finals" : [ "HALT" ],
 	"transitions" : {
             "acquire_new_letter_R": [
