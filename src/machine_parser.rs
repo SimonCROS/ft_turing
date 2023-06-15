@@ -188,42 +188,51 @@ pub fn machine_checker(m: &Machine) -> Option<&'static str> {
     let mut found_final = false;
 
     for (key, value) in &m.transitions {
-        for item in value.iter() {
+        // for item in value.iter() {
+        for i in 0..(value.len()) {
             //for each transition in HashMap<String, Vec<Transition>>
+
+            //check double read on same symbol
+            for j in (i+1)..(value.len()) {
+                if value[i].read == value[j].read {
+                    println!("in transition [{}] there is multiple statement for read [{}]", key, value[i].read);
+                    return Some("Machine logic check error");    
+                }
+            }
             
             //check if final is present
-            if m.finals.iter().position(|x| x == &item.to_state) != None
+            if !found_final && m.finals.iter().position(|x| x == &value[i].to_state) != None
             {
                 found_final = true;
             }
 
             // -action can only be RIGHT or LEFT
-            if !(item.action == "LEFT" || &item.action == "RIGHT")
+            if !(value[i].action == "LEFT" || &value[i].action == "RIGHT")
             {
-                // println!("Wrong action in [{}] read [{}] value [{}] should be [RIGHT] or [LEFT] only", key, item.read, item.action);
-                println!("statement action [{}] from [{}] read [{}] should be [RIGHT] or [LEFT] only", item.action, key, item.read);
+                // println!("Wrong action in [{}] read [{}] value [{}] should be [RIGHT] or [LEFT] only", key, value[i].read, value[i].action);
+                println!("statement action [{}] from [{}] read [{}] should be [RIGHT] or [LEFT] only", value[i].action, key, value[i].read);
                 return Some("Machine logic check error");            
             }
 
             // -make sure "to_state" statements use only stuff from "states"
-            if m.states.iter().position(|x| x == &item.to_state) == None
+            if m.states.iter().position(|x| x == &value[i].to_state) == None
             {
-                println!("statement to_state [{}] from [{}] read [{}] is not part of states", item.to_state, key, item.read);
+                println!("statement to_state [{}] from [{}] read [{}] is not part of states", value[i].to_state, key, value[i].read);
                 return Some("Machine logic check error");    
             }
 
             // -make sure read/write statements use only stuff from "alphabet"
             //read
-            if m.alphabet.iter().position(|x| x == &item.read) == None
+            if m.alphabet.iter().position(|x| x == &value[i].read) == None
             {
-                println!("statement read [{}] from [{}] read [{}] is not part of alphabet", item.read, key, item.read);
+                println!("statement read [{}] from [{}] read [{}] is not part of alphabet", value[i].read, key, value[i].read);
                 return Some("Machine logic check error");      
             }
 
             //write
-            // if m.alphabet.iter().position(|x| x == &item.write) == None
+            // if m.alphabet.iter().position(|x| x == &value[i].write) == None
             // {
-            //     println!("statement wirte [{}] from [{}] read [{}] is not part of alphabet", item.write, key, item.read);
+            //     println!("statement wirte [{}] from [{}] read [{}] is not part of alphabet", value[i].write, key, value[i].read);
             //     return Some("Machine logic check error");      
             // }
         } //end for item in value.iter()
@@ -239,16 +248,5 @@ pub fn machine_checker(m: &Machine) -> Option<&'static str> {
         return Some("Machine logic check error");        
     }
     
-    //TODO
-    // -cannot have 2 read statement for the same char in the same state
-    // println!("in transition [{}] there is multiple statement for read [{}]", key, item.read);
-    // return Some("Machine logic check error");  
-
-    // -make sure each transition block only appear once (check hashmap for duplicate key)
-
-
-    //END TODO   
-
-
    return None;
 }

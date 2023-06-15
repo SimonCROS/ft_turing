@@ -3,7 +3,7 @@ use std::fs;
 
 fn main() {
 
-    let file_path = "machines/is_palindrome.json".to_owned();
+    let file_path = "machines/unary_sub.subject.json".to_owned();
     let contents = fs::read_to_string(file_path).expect("Couldn't find or load that file.");
 
     let machine = machine_parser::machine_parser(&contents);
