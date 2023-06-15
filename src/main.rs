@@ -3,15 +3,26 @@ use std::fs;
 
 fn main() {
 
-    let file_path = "machines/is_0n1n.json".to_owned();
+    let file_path = "machines/unary_sub.subject.json".to_owned();
     let contents = fs::read_to_string(file_path).expect("Couldn't find or load that file.");
 
     let machine = machine_parser::machine_parser(&contents);
 
     match machine {
         Err(error) => print!("{}", error),
-        Ok(m) => machine_parser::machine_printer(m),
+        Ok(m) => {
+            println!("json syntax OK");
+            machine_parser::machine_printer(&m);
+            let checker = machine_parser::machine_checker(&m);
+            match checker {
+                Some(error) =>{ println!("{}", error); return ();},
+                None => {
+                    println!("logic check OK");
+                },
+            }
+        },
     }
 
-    println!("test print")
+
+    println!("test print end")
 }
