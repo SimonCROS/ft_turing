@@ -3,25 +3,15 @@ use std::fs;
 
 fn main() {
 
-    // let result = machine_parser::typed_example();
-
-
     let file_path = "machines/is_0n1n.json".to_owned();
     let contents = fs::read_to_string(file_path).expect("Couldn't find or load that file.");
 
-    // parser::untyped_example(&contents);
-    let result = machine_parser::typed_example(&contents);
+    let machine = machine_parser::machine_parser(&contents);
 
-    match result {
-        Ok(_) => (),
+    match machine {
         Err(error) => print!("{}", error),
+        Ok(m) => machine_parser::machine_printer(m),
     }
+
+    println!("test print")
 }
-
-// println!("Hello, world!");
-
-//     // Grab JSON file
-//     let file_path = "data/test.json".to_owned();
-//     let contents = fs::read_to_string(file_path).expect("Couldn't find or load that file.");
-
-//     parser::untyped_example(&contents);

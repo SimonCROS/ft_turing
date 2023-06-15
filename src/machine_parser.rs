@@ -3,7 +3,7 @@ use serde_json::Result;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize)]
-struct Transition {
+pub struct Transition {
     read: String,
     to_state: String,
     write: String,
@@ -11,7 +11,7 @@ struct Transition {
 }
 
 #[derive(Serialize, Deserialize)]
-struct Machine {
+pub struct Machine {
     name: String,
     alphabet: Vec<String>,
     blank: String,
@@ -21,75 +21,53 @@ struct Machine {
     transitions: HashMap<String, Vec<Transition>>
 }
 
-pub fn typed_example(data: &str) -> Result<()> {
-    // Some JSON input data as a &str. Maybe this comes from the user.
-    // let data = r#"
-    // {
-    //     "name" : "unary_add",
-    //     "alphabet": [ ".", "+", "1", "=" ],
-    //     "blank" : ".",
-    //     "states" : [ "scan_right", "add_one", "carriage_return",  "HALT" ],
-    //     "initial" : "scan_right",
-    //     "finals" : [ "HALT" ],
-    //     "transitions" :{
-    //         "scan_right": [
-    //             { "read" : ".", "to_state": "scan_right", "write": ".", "action": "RIGHT"},
-    //             { "read" : "+", "to_state": "scan_right", "write": "+", "action": "RIGHT"},
-    //             { "read" : "1", "to_state": "add_one", "write": ".", "action": "RIGHT"},
-    //             { "read" : "=", "to_state": "HALT" , "write": "=", "action": "RIGHT" }
-    //         ],
-    //         "add_one":
-    //         [
-    //             { "read" : ".", "to_state": "carriage_return", "write": "1", "action": "LEFT"},
-    //             { "read" : "+", "to_state": "add_one", "write": "+", "action": "RIGHT"},
-    //             { "read" : "1", "to_state": "add_one", "write": "1", "action": "RIGHT"},
-    //             { "read" : "=", "to_state": "add_one" , "write": "=", "action": "RIGHT" }
-    //         ],
-    //         "carriage_return":
-    //         [
-    //             { "read" : ".", "to_state": "scan_right", "write": ".", "action": "RIGHT"},
-    //             { "read" : "+", "to_state": "carriage_return", "write": "+", "action": "LEFT"},
-    //             { "read" : "1", "to_state": "carriage_return", "write": "1", "action": "LEFT"},
-    //             { "read" : "=", "to_state": "carriage_return", "write": "=", "action": "LEFT" }
-    //         ]
-    //     }
-    // }"#;
+pub fn machine_parser(data: &str) -> Result<Machine> {
 
-    // let v: Value = serde_json::from_str(json_data)?;
-    let p: Machine = serde_json::from_str(data)?;
+    let m: Machine = serde_json::from_str(data)?;
+    return Ok(m)
+}
 
 
-    println!("=====START====");
-    println!("name: {}", p.name);
-    println!("alphabet: ");
-    for item in p.alphabet.iter() {
+pub fn machine_printer(m: Machine) -> () {
+
+    println!("{:^60}", "machine name:");
+    println!("{:^60}", m.name);
+    print!("{:<10}", "alphabet:");
+    for item in m.alphabet.iter() {
         match item {
-            _ => println!("   {}", item),
+            _ => print!("[{}] ", item),
         }
     }
-    println!("blank: {}", p.blank);
-    println!("states: ");
-    for item in p.states.iter() {
+    println!("");
+    print!("{:<10}", "blank:");
+    println!("[{}]", m.blank);
+    print!("{:<10}", "states: ");
+    for item in m.states.iter() {
         match item {
-            _ => println!("   {}", item),
+            _ => print!("[{}] ", item),
         }
     }
-    println!("initial: {}", p.initial);
-    println!("finals: ");
-    for item in p.finals.iter() {
+    println!("");
+    print!("{:<10}", "initial:");
+    println!("[{}]", m.initial);
+    print!("{:<10}","finals: ");
+    for item in m.finals.iter() {
         match item {
-            _ => println!("   {}", item),
+            _ => print!("[{}] ", item),
         }
     }
-    println!("transitions: ");
-    for (key, value) in p.transitions.iter()  {
-        println!("  name: {}", key);
+    println!("");
+    println!("{:^60}", "transitions:");
+    println!("{:^15 }|{: ^15}|{: ^15}|{: ^15}",
+    "read", "to_state", "write", "action");
+    for (key, value) in m.transitions.iter()  {
+        println!("{:#^60}", key);
         for item in value.iter() {
             match item {
-                _ => println!("     read: {}, to_state: {}, write: {}, action: {}", item.read, item.to_state, item.write, item.action),
+                _ => println!("{: ^15}|{: ^15}|{: ^15}|{: ^15}",
+                            item.read, item.to_state, item.write, item.action
+                ),
             }
         }
     }
-    println!("=====DONE=====");
-    Ok(())
 }
