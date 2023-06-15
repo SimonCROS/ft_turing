@@ -58,13 +58,13 @@ pub fn machine_printer(m: Machine) -> () {
     }
     println!("");
     println!("{:^60}", "transitions:");
-    println!("{:^15 }|{: ^15}|{: ^15}|{: ^15}",
+    println!("{:^12 }|{: ^24}|{: ^12}|{: ^12}",
     "read", "to_state", "write", "action");
     for (key, value) in m.transitions.iter()  {
         println!("{:#^60}", key);
         for item in value.iter() {
             match item {
-                _ => println!("{: ^15}|{: ^15}|{: ^15}|{: ^15}",
+                _ => println!("{: ^12}|{: ^24}|{: ^12}|{: ^12}",
                             item.read, item.to_state, item.write, item.action
                 ),
             }
