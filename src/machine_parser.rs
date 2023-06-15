@@ -112,10 +112,11 @@ pub fn machine_checker(m: &Machine) -> Option<&'static str> {
     }
 
     // -blank: The blank character, must be part of the alphabet
-    
-
-
-
+    if m.alphabet.iter().position(|x| x == &m.blank) == None
+    {
+        println!("blank symbol [{}] is not part of alphabet", m.blank);
+        return Some("Machine logic check error");    
+    }
 
     //states cannot be duplicate
     for i in 0..(m.states.len() - 1)
@@ -133,15 +134,116 @@ pub fn machine_checker(m: &Machine) -> Option<&'static str> {
     // (more parsing check stuff)
     // -initial and finals states must be included in states
     
-    
+    //initial
+    if m.states.iter().position(|x| x == &m.initial) == None
+    {
+        println!("initial state [{}] is not part of states", m.initial);
+        return Some("Machine logic check error");    
+    }
+
+    //finals
+    for item in m.finals.iter() {
+        match item {
+            _ => {
+                if m.states.iter().position(|x| x == item) == None
+                {
+                    println!("final state [{}] is not part of states", item);
+                    return Some("Machine logic check error");    
+                }
+            },
+        }
+    }
+
     //transition stuff
     // -make sure every state (finals excluded) has transitions
-    // -cannot have 2 read statement for the same char in the same state
-    // -at least one HALT statement must be present in a to_state statement
-    // -action can only be RIGHT or LEFT
-    // -make sure read/write statements use only stuff from "alphabet"
-    // -make sure "to_state" statements use only stuff from "states"
+    for item in m.states.iter() {
+        match item {
+            _ => {
+                if m.finals.iter().position(|x| x == item) == None
+                {
+                    //state is not final, check if it is in transition
+                    if !m.transitions.contains_key(item) {
+                        println!("state [{}] has no transitions.", item);
+                        return Some("Machine logic check error");   
+                    }
+                }
+            },
+        }
+    }
 
+
+    // -make sure every transition block is for a state that exists
+    for (key, _value) in &m.transitions {
+        if m.states.iter().position(|x| x == key) == None
+        {
+            println!("transition [{}] is not part of states", key);
+            return Some("Machine logic check error");    
+        }
+    }
+
+    //inside the transitions
+
+    // -at least one HALT statement must be present in a to_state statement
+    //(try to check that during other checks)
+    let mut found_final = false;
+
+    for (key, value) in &m.transitions {
+        for item in value.iter() {
+            //for each transition in HashMap<String, Vec<Transition>>
+            
+            //check if final is present
+            if m.finals.iter().position(|x| x == &item.to_state) != None
+            {
+                found_final = true;
+            }
+
+            // -action can only be RIGHT or LEFT
+            if !(item.action == "LEFT" || &item.action == "RIGHT")
+            {
+                // println!("Wrong action in [{}] read [{}] value [{}] should be [RIGHT] or [LEFT] only", key, item.read, item.action);
+                println!("statement action [{}] from [{}] read [{}] should be [RIGHT] or [LEFT] only", item.action, key, item.read);
+                return Some("Machine logic check error");            
+            }
+
+            // -make sure "to_state" statements use only stuff from "states"
+            if m.states.iter().position(|x| x == &item.to_state) == None
+            {
+                println!("statement to_state [{}] from [{}] read [{}] is not part of states", item.to_state, key, item.read);
+                return Some("Machine logic check error");    
+            }
+
+            // -make sure read/write statements use only stuff from "alphabet"
+            //read
+            if m.alphabet.iter().position(|x| x == &item.read) == None
+            {
+                println!("statement read [{}] from [{}] read [{}] is not part of alphabet", item.read, key, item.read);
+                return Some("Machine logic check error");      
+            }
+
+            //write
+            if m.alphabet.iter().position(|x| x == &item.write) == None
+            {
+                println!("statement wirte [{}] from [{}] read [{}] is not part of alphabet", item.write, key, item.read);
+                return Some("Machine logic check error");      
+            }
+        } //end for item in value.iter()
+        
+        
+        
+    }
+    
+    // -at least one HALT statement must be present in a to_state statement
+    if !found_final
+    {
+        println!("at least one final state must be present in the to_state statements");
+        return Some("Machine logic check error");        
+    }
+    
+    //TODO
+    // -cannot have 2 read statement for the same char in the same state
+    // println!("in transition [{}] there is multiple statement for read [{}]", key, item.read);
+    // return Some("Machine logic check error");  
+    //END TODO   
 
 
    return None;
