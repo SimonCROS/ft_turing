@@ -1,6 +1,0 @@
-(executable
- (public_name ft_turing)
- (name main)
- (libraries ft_turing core yojson)
- (preprocess (pps ppx_jane ppx_yojson_conv ppx_compare))
- (flags (-w -69)))
