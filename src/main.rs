@@ -46,6 +46,6 @@ fn main() {
 
 
         },
-        Err(error) => print!("{}", error),
+        Err(error) => eprintln!("{}", error),
     }
 }
