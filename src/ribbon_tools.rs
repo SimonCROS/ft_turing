@@ -1,11 +1,11 @@
-pub fn ribbon_checker(m: &Machine, input: String)-> Option<String> {
+pub fn ribbon_checker(m: &Machine, input: String)-> Result<(), String> {
     for c in input.chars() { 
         if c == m.blank {
-            return Some(format!("blank char [{}] not allowed in input"));
+            return Err(format!("blank char [{}] not allowed in input"));
         }
         else if m.alphabet.iter().position(|x| x == c) == None {
-            return Some(format!("symbol [{}] is not part of alphabet", c));
+            return Err(format!("symbol [{}] is not part of alphabet", c));
         }
     }
-    return None;
+    Ok(())
 }

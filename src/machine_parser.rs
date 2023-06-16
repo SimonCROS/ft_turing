@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize)]
 pub struct Transition {
@@ -49,86 +49,62 @@ pub fn machine_printer(m: &Machine) -> () {
     }
     println!("");
     println!("{:^60}", "transitions:");
-    println!(
-        "{:^12 }|{: ^24}|{: ^12}|{: ^12}",
-        "read", "to_state", "write", "action"
-    );
+    println!("{:^12 }|{: ^24}|{: ^12}|{: ^12}", "read", "to_state", "write", "action");
     for (key, value) in m.transitions.iter() {
         println!("{:#^60}", key);
         for item in value.iter() {
             match item {
-                _ => println!(
-                    "{: ^12}|{: ^24}|{: ^12}|{: ^12}",
-                    item.read, item.to_state, item.write, item.action
-                ),
+                _ => println!("{: ^12}|{: ^24}|{: ^12}|{: ^12}", item.read, item.to_state, item.write, item.action),
             }
         }
     }
 }
 
-pub fn machine_checker(m: &Machine) -> Option<String> {
+pub fn check_duplicates<T>(list: &Vec<T>) -> Option<T>
+    where T: PartialEq + Clone {
+    match (1..list.len()).find(|i| list[*i..].contains(&list[i - 1])) {
+        Some(duplicated) => Some(list[duplicated].clone()),
+        None => None
+    }
+}
+
+pub fn check_contains_all<T>(needle: &Vec<T>, haystack: &Vec<T>) -> Option<T>
+    where T: PartialEq + Clone {
+    match needle.iter().find(|el| !haystack.contains(el)) {
+        Some(not_in) => Some(not_in.clone()),
+        None => None
+    }
+}
+
+pub fn machine_checker(m: &Machine) -> Result<(), String> {
     // -Your program must detect and reject ill formated or invalid machine descriptions
     // and inputs, with a relevant error message. This means that your program must
     // never crash for any reason.
-
-    //check alphabet has no duplicate
-    for i in 0..(m.alphabet.len() - 1) {
-        for j in (i + 1)..(m.alphabet.len()) {
-            if m.alphabet[i] == m.alphabet[j] {
-                return Some(format!("duplicate alphabet symbol [{}]", m.alphabet[i]));
-            }
-        }
-    }
-
-    //check alphabet has at least 2 elements (blank + 1 other minimum)
+    
     if m.alphabet.len() < 2 {
-        return Some(format!("a minimum of 2 alphabet symbol are required"));
-    }
-
-    // -blank: The blank character, must be part of the alphabet
-    if m.alphabet.iter().position(|x| x == &m.blank) == None {
-        return Some(format!("blank symbol [{}] is not part of alphabet", m.blank));
-    }
-
-    //states cannot be duplicate
-    for i in 0..(m.states.len() - 1) {
-        for j in (i + 1)..(m.states.len()) {
-            if m.states[i] == m.states[j] {
-                return Some(format!("duplicate state [{}]", m.states[i]));
-            }
-        }
-    }
-
-    //check states has at least 2 elements
-    if m.states.len() < 2 {
-        return Some(format!("a minimum of 2 states statements are required"));
-    }
-
-    // (more parsing check stuff)
-    // -initial and finals states must be included in states
-
-    //initial
-    if m.states.iter().position(|x| x == &m.initial) == None {
-        return Some(format!(
-            "initial state [{}] is not part of states",
-            m.initial
-        ));
-    }
-
-    //finals
-    for item in m.finals.iter() {
-        match item {
-            _ => {
-                if m.states.iter().position(|x| x == item) == None {
-                    return Some(format!("final state [{}] is not part of states", item));
-                }
-            }
-        }
-    }
-
-    //there must be at least 1 final state
-    if m.finals.len() < 1 {
-        return Some(format!("a finals state statement is required"));
+        // Error if the alphabet has less than 2 symbols (blank + 1 other minimum)
+        return Err(format!("a minimum of 2 alphabet symbol are required"));
+    } else if m.states.len() < 2 {
+        // Error if there are less than 2 states (initial + 1 final minimum)
+        return Err(format!("a minimum of 2 states are required"));
+    } else if m.finals.len() < 1 {
+        // Error if there is no final state
+        return Err(format!("at least one final state is required"));
+    } else if !m.alphabet.contains(&m.blank) {
+        // Error if the blank character is not part of the alphabet
+        return Err(format!("blank symbol [{}] is not part of alphabet", m.blank));
+    } else if !m.states.contains(&m.initial) {
+        // Error if the initial state is not in the states list
+        return Err(format!("initial state [{}] is not part of states", m.initial));
+    } else if let Some(not_in) = check_contains_all(&m.finals, &m.states) {
+        // Error if the initial state is not in the states list
+        return Err(format!("final state [{}] is not part of states", not_in));
+    } else if let Some(duplicated) = check_duplicates(&m.alphabet) {
+        // Error if there is a duplicated alphabet symbol
+        return Err(format!("duplicate alphabet symbol [{}]", duplicated));
+    } else if let Some(duplicated) = check_duplicates(&m.states) {
+        // Error if there is a duplicated state
+        return Err(format!("duplicate state [{}]", duplicated));
     }
 
     //transition stuff
@@ -139,7 +115,7 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
                 if m.finals.iter().position(|x| x == item) == None {
                     //state is not final, check if it is in transition
                     if !m.transitions.contains_key(item) {
-                        return Some(format!("state [{}] has no transitions.", item));
+                        return Err(format!("state [{}] has no transitions.", item));
                     }
                 }
             }
@@ -149,7 +125,7 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
     // -make sure every transition block is for a state that exists
     for (key, _value) in &m.transitions {
         if m.states.iter().position(|x| x == key) == None {
-            return Some(format!("transition [{}] is not part of states", key));
+            return Err(format!("transition [{}] is not part of states", key));
         }
     }
 
@@ -167,10 +143,7 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
             //check double read on same symbol
             for j in (i + 1)..(value.len()) {
                 if value[i].read == value[j].read {
-                    return Some(format!(
-                        "in transition [{}] there is multiple statement for read [{}]",
-                        key, value[i].read
-                    ));
+                    return Err(format!("in transition [{}] there is multiple statement for read [{}]", key, value[i].read));
                 }
             }
 
@@ -181,36 +154,25 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
 
             // -action can only be RIGHT or LEFT
             if !(value[i].action == "LEFT" || &value[i].action == "RIGHT") {
-                return Some(format!(
-                    "statement action [{}] from [{}] read [{}] should be [RIGHT] or [LEFT] only",
-                    value[i].action, key, value[i].read
-                ));
+                return Err(format!("statement action [{}] from [{}] read [{}] should be [RIGHT] or [LEFT] only", value[i].action, key, value[i].read));
             }
 
             // -make sure "to_state" statements use only stuff from "states"
             if m.states.iter().position(|x| x == &value[i].to_state) == None {
-                return Some(format!(
-                    "statement to_state [{}] from [{}] read [{}] is not part of states",
-                    value[i].to_state, key, value[i].read
-                ));
+                return Err(format!("statement to_state [{}] from [{}] read [{}] is not part of states", value[i].to_state, key, value[i].read));
             }
 
             // -make sure read statements use only stuff from "alphabet"
             if m.alphabet.iter().position(|x| x == &value[i].read) == None {
-                return Some(format!(
-                    "statement read [{}] from [{}] read [{}] is not part of alphabet",
-                    value[i].read, key, value[i].read
-                ));
+                return Err(format!("statement read [{}] from [{}] read [{}] is not part of alphabet", value[i].read, key, value[i].read));
             }
         }
     }
 
     // -at least one HALT statement must be present in a to_state statement
     if !found_final {
-        return Some(format!(
-            "at least one final state must be present in the to_state statements"
-        ));
+        return Err(format!("at least one final state must be present in the to_state statements"));
     }
 
-    return None;
+    Ok(())
 }

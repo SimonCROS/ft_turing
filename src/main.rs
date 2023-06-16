@@ -3,7 +3,6 @@ use std::fs;
 use std::env;
 
 fn main() {
-
     let args: Vec<String> = env::args().collect();
 
     if args.len() != 3 {
@@ -34,10 +33,10 @@ fn main() {
         Ok(m) => {
             let checker = machine_parser::machine_checker(&m);
             match checker {
-                Some(error) => { println!("{}", error); return ();},
-                None => {
+                Ok(()) => {
                     machine_parser::machine_printer(&m);
                 },
+                Err(error) => { println!("{}", error); return ();},
             };
             
             //here 
