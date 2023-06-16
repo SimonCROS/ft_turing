@@ -80,12 +80,14 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
         }
     }
 
+    //check alphabet has at least 2 elements (blank + 1 other minimum)
+    if m.alphabet.len() < 2 {
+        return Some(format!("a minimum of 2 alphabet symbol are required"));
+    }
+
     // -blank: The blank character, must be part of the alphabet
     if m.alphabet.iter().position(|x| x == &m.blank) == None {
-        return Some(format!(
-            "blank symbol [{}] is not part of alphabet",
-            m.blank
-        ));
+        return Some(format!("blank symbol [{}] is not part of alphabet", m.blank));
     }
 
     //states cannot be duplicate
@@ -95,6 +97,11 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
                 return Some(format!("duplicate state [{}]", m.states[i]));
             }
         }
+    }
+
+    //check states has at least 2 elements
+    if m.states.len() < 2 {
+        return Some(format!("a minimum of 2 states statements are required"));
     }
 
     // (more parsing check stuff)
@@ -117,6 +124,11 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
                 }
             }
         }
+    }
+
+    //there must be at least 1 final state
+    if m.finals.len() < 1 {
+        return Some(format!("a finals state statement is required"));
     }
 
     //transition stuff
@@ -183,21 +195,14 @@ pub fn machine_checker(m: &Machine) -> Option<String> {
                 ));
             }
 
-            // -make sure read/write statements use only stuff from "alphabet"
-            //read
+            // -make sure read statements use only stuff from "alphabet"
             if m.alphabet.iter().position(|x| x == &value[i].read) == None {
                 return Some(format!(
                     "statement read [{}] from [{}] read [{}] is not part of alphabet",
                     value[i].read, key, value[i].read
                 ));
             }
-
-            //write
-            // if m.alphabet.iter().position(|x| x == &value[i].write) == None
-            // {
-            //     return Some(format!("statement wirte [{}] from [{}] read [{}] is not part of alphabet", value[i].write, key, value[i].read));
-            // }
-        } //end for item in value.iter()
+        }
     }
 
     // -at least one HALT statement must be present in a to_state statement
