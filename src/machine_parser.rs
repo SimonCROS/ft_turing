@@ -60,79 +60,77 @@ pub fn machine_printer(m: &Machine) -> () {
     }
 }
 
-pub fn check_duplicates<T>(list: &Vec<T>) -> Option<T>
-    where T: PartialEq + Clone {
+fn check_duplicates<T>(list: &Vec<T>) -> Option<T>
+where
+    T: PartialEq + Clone,
+{
     match (1..list.len()).find(|i| list[*i..].contains(&list[i - 1])) {
         Some(duplicated) => Some(list[duplicated].clone()),
-        None => None
+        None => None,
     }
 }
 
-pub fn check_contains_all<T>(needle: &Vec<T>, haystack: &Vec<T>) -> Option<T>
-    where T: PartialEq + Clone {
+fn check_contains_all<T>(needle: &Vec<T>, haystack: &Vec<T>) -> Option<T>
+where
+    T: PartialEq + Clone,
+{
     match needle.iter().find(|el| !haystack.contains(el)) {
         Some(not_in) => Some(not_in.clone()),
-        None => None
+        None => None,
     }
 }
 
 pub fn machine_checker(m: &Machine) -> Result<(), String> {
-    // -Your program must detect and reject ill formated or invalid machine descriptions
-    // and inputs, with a relevant error message. This means that your program must
-    // never crash for any reason.
-    
     if m.alphabet.len() < 2 {
         // Error if the alphabet has less than 2 symbols (blank + 1 other minimum)
-        return Err(format!("a minimum of 2 alphabet symbol are required"));
+        Err(format!("a minimum of 2 alphabet symbol are required"))
     } else if m.states.len() < 2 {
         // Error if there are less than 2 states (initial + 1 final minimum)
-        return Err(format!("a minimum of 2 states are required"));
+        Err(format!("a minimum of 2 states are required"))
     } else if m.finals.len() < 1 {
         // Error if there is no final state
-        return Err(format!("at least one final state is required"));
+        Err(format!("at least one final state is required"))
     } else if !m.alphabet.contains(&m.blank) {
         // Error if the blank character is not part of the alphabet
-        return Err(format!("blank symbol [{}] is not part of alphabet", m.blank));
+        Err(format!("blank symbol [{}] is not part of alphabet", m.blank))
     } else if !m.states.contains(&m.initial) {
         // Error if the initial state is not in the states list
-        return Err(format!("initial state [{}] is not part of states", m.initial));
+        Err(format!("initial state [{}] is not part of states", m.initial))
+    } else if m.finals.contains(&m.initial) {
+        // Error if the initial state is a final state
+        Err(format!("initial state [{}] is also a final state", m.initial))
     } else if let Some(not_in) = check_contains_all(&m.finals, &m.states) {
-        // Error if the initial state is not in the states list
-        return Err(format!("final state [{}] is not part of states", not_in));
+        // Error if a final state is not in the states list
+        Err(format!("final state [{}] is not part of states", not_in))
     } else if let Some(duplicated) = check_duplicates(&m.alphabet) {
         // Error if there is a duplicated alphabet symbol
-        return Err(format!("duplicate alphabet symbol [{}]", duplicated));
+        Err(format!("duplicate alphabet symbol [{}]", duplicated))
     } else if let Some(duplicated) = check_duplicates(&m.states) {
         // Error if there is a duplicated state
-        return Err(format!("duplicate state [{}]", duplicated));
+        Err(format!("duplicate state [{}]", duplicated))
+    } else {
+        check_transitions(m)
+    }
+}
+
+fn check_transitions(m: &Machine) -> Result<(), String> {
+    let transitions_keys: Vec<String> = m.transitions.keys().cloned().collect();
+    let not_final_states: Vec<String> = m.states.iter().filter(|el| !m.finals.contains(el)).cloned().collect();
+
+    if let Some(duplicated) = check_duplicates(&transitions_keys) {
+        // Error if a transition is not in the states list
+        return Err(format!("duplicate transition [{}]", duplicated));
+    } else if let Some(found) = transitions_keys.iter().find(|el| m.finals.contains(*el)) {
+        // Error if a transition is not in the states list
+        return Err(format!("transition [{}] is a final state and cannot have transition", found));
+    } else if let Some(not_in) = check_contains_all(&transitions_keys, &not_final_states) {
+        // Error if a transition is not in the states list
+        return Err(format!("transition [{}] is not part of states", not_in));
+    } else if let Some(not_in) = check_contains_all(&not_final_states, &transitions_keys) {
+        // Error if a state (not final) doesn't have transition implementation
+        return Err(format!("state [{}] is not implemented in transitions", not_in));
     }
 
-    //transition stuff
-    // -make sure every state (finals excluded) has transitions
-    for item in m.states.iter() {
-        match item {
-            _ => {
-                if m.finals.iter().position(|x| x == item) == None {
-                    //state is not final, check if it is in transition
-                    if !m.transitions.contains_key(item) {
-                        return Err(format!("state [{}] has no transitions.", item));
-                    }
-                }
-            }
-        }
-    }
-
-    // -make sure every transition block is for a state that exists
-    for (key, _value) in &m.transitions {
-        if m.states.iter().position(|x| x == key) == None {
-            return Err(format!("transition [{}] is not part of states", key));
-        }
-    }
-
-    //inside the transitions
-
-    // -at least one HALT statement must be present in a to_state statement
-    //(try to check that during other checks)
     let mut found_final = false;
 
     for (key, value) in &m.transitions {
@@ -167,11 +165,6 @@ pub fn machine_checker(m: &Machine) -> Result<(), String> {
                 return Err(format!("statement read [{}] from [{}] read [{}] is not part of alphabet", value[i].read, key, value[i].read));
             }
         }
-    }
-
-    // -at least one HALT statement must be present in a to_state statement
-    if !found_final {
-        return Err(format!("at least one final state must be present in the to_state statements"));
     }
 
     Ok(())
