@@ -12,11 +12,11 @@ pub struct Transition {
 #[derive(Serialize, Deserialize)]
 pub struct Machine {
     name: String,
-    alphabet: Vec<char>,
-    blank: char,
-    states: Vec<String>,
-    initial: String,
-    finals: Vec<String>,
+    pub alphabet: Vec<char>,
+    pub blank: char,
+    pub states: Vec<String>,
+    pub initial: String,
+    pub finals: Vec<String>,
     transitions: HashMap<String, Vec<Transition>>,
 }
 

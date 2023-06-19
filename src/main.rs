@@ -1,22 +1,27 @@
 pub mod machine_parser;
+pub mod machine_runner;
 use std::fs;
 use std::env;
+
+fn print_help() {
+    println!("usage: ft_turing [-h] jsonfile input");
+    println!();
+    println!("positional arguments:");
+    println!("  {:<20} json description of the machine", "jsonfile");
+    println!();
+    println!("  {:<20} input of the machine", "input");
+    println!();
+    println!("optional arguments:");
+    println!("  {:<20} show this help message and exit", "-h, --help");
+    println!();
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() != 3 {
         if args[1] == "--help" || args[1] == "-h" {
-            println!("usage: ft_turing [-h] jsonfile input");
-            println!();
-            println!("positional arguments:");
-            println!("  {:<20} json description of the machine", "jsonfile");
-            println!();
-            println!("  {:<20} input of the machine", "input");
-            println!();
-            println!("optional arguments:");
-            println!("  {:<20} show this help message and exit", "-h, --help");
-            println!();
+            print_help();
         }
         else {
             println!("Wrong number of arguments");
@@ -35,16 +40,19 @@ fn main() {
             match checker {
                 Ok(()) => {
                     machine_parser::machine_printer(&m);
+                    let input = args[2].to_owned();
+                    let exec = machine_runner::machine_start(&m, input);
+                    match exec {
+                        Ok(ribbon) => {
+                            println!("Machine has run successfully !\nEnd ribbon is:");
+                            println!("[{}]", ribbon);
+                        },
+                        Err(error) => { println!("{}", error); return ();},
+                    };
                 },
-                Err(error) => { println!("{}", error); return ();},
+                Err(error) => { println!("JSON LOGIC ERROR: {}", error); return ();},
             };
-            
-            //here 
-            println!("popopopo");
-            // let input = args[2];
-
-
         },
-        Err(error) => eprintln!("{}", error),
+        Err(error) => eprintln!("JSON SYNTAX ERROR: {}", error),
     }
 }

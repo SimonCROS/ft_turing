@@ -1,4 +1,4 @@
-pub fn ribbon_checker(m: &Machine, input: String)-> Result<(), String> {
+pub fn input_checker(m: &Machine, input: String)-> Result<(), String> {
     for c in input.chars() { 
         if c == m.blank {
             return Err(format!("blank char [{}] not allowed in input"));
