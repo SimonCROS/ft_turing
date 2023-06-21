@@ -41,7 +41,7 @@ fn main() {
                 Ok(()) => {
                     machine_parser::machine_printer(&m);
                     let input = args[2].to_owned();
-                    let exec = machine_runner::machine_start(&m, input);
+                    let exec = machine_runner::machine_start(&m, &input);
                     match exec {
                         Ok(ribbon) => {
                             println!("Machine [{}] has run successfully !", m.name);
