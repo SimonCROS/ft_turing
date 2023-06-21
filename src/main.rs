@@ -30,21 +30,23 @@ fn main() {
         return;
     }
     
-    let file_path = args[1].to_owned();
-    let contents = fs::read_to_string(file_path).expect("Couldn't find or load that file.");
-    let machine = serde_json::from_str(&contents);
+    let file_path: String = args[1].to_owned();
+    let contents: String = fs::read_to_string(file_path).expect("Couldn't find or load that file.");
+    let machine: Result<machine_parser::Machine, serde_json::Error> = serde_json::from_str(&contents);
 
     match machine {
         Ok(m) => {
-            let checker = machine_parser::machine_checker(&m);
+            let checker: Result<(), String> = machine_parser::machine_checker(&m);
             match checker {
                 Ok(()) => {
                     machine_parser::machine_printer(&m);
-                    let input = args[2].to_owned();
-                    let exec = machine_runner::machine_start(&m, &input);
+                    let input: String = args[2].to_owned();
+                    let exec: Result<String, String> = machine_runner::machine_start(&m, &input);
                     match exec {
                         Ok(ribbon) => {
                             println!("Machine [{}] has run successfully !", m.name);
+                            println!("Input was:");
+                            println!("[{}]", input);
                             println!("End ribbon is:");
                             println!("[{}]", ribbon);
                         },

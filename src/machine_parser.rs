@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct Transition {
     pub read: char,
     pub to_state: String,
@@ -9,7 +9,7 @@ pub struct Transition {
     pub action: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct Machine {
     pub name: String,
     pub alphabet: Vec<char>,

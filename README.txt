@@ -1,3 +1,19 @@
+TODO need protection !
+
+stack overflow -> unary_add.json 1+1+1
+	add check that at least one read symbol that leads to a halt is present in the input (unless its blank)
+	would probably not protect against (json + input) designed to break it but would handle "normal" cases mostly 
+
+stack overflows with big inputs, too many strings in stack ? 
+
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+
+
 Things the machine itself should check:
 (from subject)
 -Your program must detect and reject ill formated or invalid machine descriptions
