@@ -9,3 +9,10 @@ pub fn input_checker(m: &Machine, input: String)-> Result<(), String> {
     }
     Ok(())
 }
+
+
+// pub fn pretty_print_ribbon(ribbon: String, blank: char, size: usize) {
+//     println!("[{:blank^size}]", ribbon);
+// }
+
+//pub fn make new ribbon (left, newchar, right) -> string

@@ -44,7 +44,8 @@ fn main() {
                     let exec = machine_runner::machine_start(&m, input);
                     match exec {
                         Ok(ribbon) => {
-                            println!("Machine has run successfully !\nEnd ribbon is:");
+                            println!("Machine [{}] has run successfully !", m.name);
+                            println!("End ribbon is:");
                             println!("[{}]", ribbon);
                         },
                         Err(error) => { println!("{}", error); return ();},

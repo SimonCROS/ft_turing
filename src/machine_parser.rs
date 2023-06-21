@@ -3,21 +3,21 @@ use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize)]
 pub struct Transition {
-    read: char,
-    to_state: String,
-    write: char,
-    action: String,
+    pub read: char,
+    pub to_state: String,
+    pub write: char,
+    pub action: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Machine {
-    name: String,
+    pub name: String,
     pub alphabet: Vec<char>,
     pub blank: char,
     pub states: Vec<String>,
     pub initial: String,
     pub finals: Vec<String>,
-    transitions: HashMap<String, Vec<Transition>>,
+    pub transitions: HashMap<String, Vec<Transition>>,
 }
 
 pub fn machine_printer(m: &Machine) -> () {
