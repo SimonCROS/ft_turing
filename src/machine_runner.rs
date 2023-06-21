@@ -1,6 +1,7 @@
 use crate::machine_parser::Machine;
 use crate::machine_parser::Transition;
 use colored::Colorize;
+use tailcall::tailcall;
 
 //return Err(format!("Something went very wrong"));
 //are there just in case and should never happen
@@ -33,8 +34,8 @@ fn machine_check_transitions(state: &Vec<Transition>, read: char)-> Result<&Tran
 }
 
 
-
-fn machine_step(m: &Machine, ribbon: &String, index: usize, state: (&String, &Vec<Transition>))-> Result<String, String> {
+#[tailcall]
+fn machine_step(m: &Machine, ribbon: String, index: usize, state: (&String, &Vec<Transition>))-> Result<String, String> {
  
     let c: char = ribbon.chars().nth(index).unwrap(); 
 
@@ -48,8 +49,6 @@ fn machine_step(m: &Machine, ribbon: &String, index: usize, state: (&String, &Ve
             let colored_ribbon: String = format!("{}{}{}", left, c.to_string().red() , right );
             println!("{:^15} |{:^23}R{:^3}>{:^23}W{:^3}|{:^8}", colored_ribbon, state.0, t.read, t.to_state, t.write, t.action);
 
-
-
             if m.finals.iter().position(|x: &String| x == &t.to_state) != None {
                 return Ok(format!("{}{}{}", left, t.write, right));
             }
@@ -60,22 +59,22 @@ fn machine_step(m: &Machine, ribbon: &String, index: usize, state: (&String, &Ve
                     if t.action == "LEFT" {
                         if index == 0 {
                             let new_ribbon: String = format!("{}{}{}{}",m.blank, left, t.write, right);
-                            return machine_step(m, &new_ribbon, 0, new_state);
+                            return machine_step(m, new_ribbon, 0, new_state);
                         }
                         else {
                             let new_ribbon: String = format!("{}{}{}", left, t.write, right);
-                            return machine_step(m, &new_ribbon, index - 1, new_state);
+                            return machine_step(m, new_ribbon, index - 1, new_state);
                         }
                     }
                     else if t.action == "RIGHT" {
                         let new_index: usize = index + 1;
                         if new_index == ribbon.len() {
                             let new_ribbon: String = format!("{}{}{}{}", left, t.write, right, &m.blank);
-                            return machine_step(m, &new_ribbon, new_index, new_state);
+                            return machine_step(m, new_ribbon, new_index, new_state);
                         }   
                         else {
                             let new_ribbon: String = format!("{}{}{}", left, t.write, right);
-                            return machine_step(m, &new_ribbon, new_index, new_state);
+                            return machine_step(m, new_ribbon, new_index, new_state);
                         }    
                     }
                     else { return Err(format!("Something went very wrong"));} 
@@ -101,7 +100,7 @@ pub fn machine_start(m: &Machine, input: &String)-> Result<String, String> {
             println!("{:#^80}", "");
             println!("{:#^80}", "");
             println!("{:^15}|{:^23}|{:^3}|{:^23}|{:^3}|{:^8}", "Ribbon", "Current State", "R", "New State", "W",  "action");
-            let final_ribbon: Result<String, String> = machine_step(m, &input, 0, initial_state);
+            let final_ribbon: Result<String, String> = machine_step(m, input.to_string(), 0, initial_state);
             match final_ribbon {
                 Ok(r) => return Ok(r),
                 Err(error) => { return Err(format!("MACHINE ERROR: [{}]", error));},
