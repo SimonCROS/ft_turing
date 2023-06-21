@@ -103,7 +103,7 @@ pub fn machine_start(m: &Machine, input: &String)-> Result<String, String> {
             let final_ribbon: Result<String, String> = machine_step(m, input.to_string(), 0, initial_state);
             match final_ribbon {
                 Ok(r) => return Ok(r),
-                Err(error) => { return Err(format!("MACHINE ERROR: [{}]", error));},
+                Err(error) => { return Err(format!("MACHINE ERROR: {}", error));},
             };
         }, 
         None => { return Err(format!("Something went very wrong"));},
