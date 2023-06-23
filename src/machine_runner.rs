@@ -13,6 +13,7 @@ fn get_transition<'a>(state: (&String, &'a Vec<Transition>), read: char) -> Resu
         .ok_or(format!("State [{}] has not transition for read [{}], Aborting", state.0, read))
 }
 
+#[allow(unreachable_code)]
 #[tailcall]
 fn machine_step(m: &Machine, ribbon: String, index: usize, state: (&String, &Vec<Transition>)) -> Result<String, String> {
     let c: char = ribbon.chars().nth(index).unwrap();
