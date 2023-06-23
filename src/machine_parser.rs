@@ -107,7 +107,7 @@ fn check_transitions(m: &Machine) -> Result<(), String> {
     } else if let Some(not_in) = check_contains_all(&not_final_states, &transitions_keys) {
         Err(format!("state [{}] is not implemented in transitions", not_in))
     } else if m.transitions.iter().all(|(_, trs)| trs.iter().all(|tr| !m.finals.contains(&tr.to_state))) {
-        Err(format!("no final state is used in any transition"))
+        Err(format!("no final state is present in any transition"))
     } else {
         m.transitions.iter().try_for_each(|(k, v)| check_state_transitions(m, k, v))
     }
