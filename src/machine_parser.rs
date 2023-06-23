@@ -20,46 +20,6 @@ pub struct Machine {
     pub transitions: HashMap<String, Vec<Transition>>,
 }
 
-pub fn machine_printer(m: &Machine) -> () {
-    println!("{:^60}", "machine name:");
-    println!("{:^60}", m.name);
-    print!("{:<10}", "alphabet:");
-    for item in m.alphabet.iter() {
-        match item {
-            _ => print!("[{}] ", item),
-        }
-    }
-    println!("");
-    print!("{:<10}", "blank:");
-    println!("[{}]", m.blank);
-    print!("{:<10}", "states: ");
-    for item in m.states.iter() {
-        match item {
-            _ => print!("[{}] ", item),
-        }
-    }
-    println!("");
-    print!("{:<10}", "initial:");
-    println!("[{}]", m.initial);
-    print!("{:<10}", "finals: ");
-    for item in m.finals.iter() {
-        match item {
-            _ => print!("[{}] ", item),
-        }
-    }
-    println!("");
-    println!("{:^60}", "transitions:");
-    println!("{:^12 }|{: ^24}|{: ^12}|{: ^12}", "read", "to_state", "write", "action");
-    for (key, value) in m.transitions.iter() {
-        println!("{:#^60}", key);
-        for item in value.iter() {
-            match item {
-                _ => println!("{: ^12}|{: ^24}|{: ^12}|{: ^12}", item.read, item.to_state, item.write, item.action),
-            }
-        }
-    }
-}
-
 fn check_duplicates<T>(list: &Vec<T>) -> Option<T>
 where
     T: PartialEq + Clone,
