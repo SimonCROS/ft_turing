@@ -2,6 +2,7 @@ mod machine_parser;
 mod machine_runner;
 mod input_checker;
 mod print;
+mod utils;
 use std::fs;
 use std::env;
 use print::*;
