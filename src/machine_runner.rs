@@ -37,7 +37,7 @@ fn machine_step(m: &Machine, ribbon: String, index: usize, state: (&String, &Vec
             match (t.action.as_str(), index) {
                 ("LEFT", 0) => machine_step(m, format!("{}{}{}{}", m.blank, left, t.write, right), 0, new_state),
                 ("LEFT", _) => machine_step(m, format!("{}{}{}", left, t.write, right), index - 1, new_state),
-                ("RIGHT", 0) => machine_step(m, format!("{}{}{}{}", left, t.write, right, &m.blank), index + 1, new_state),
+                ("RIGHT", i) if i + 1 == ribbon.len() => machine_step(m, format!("{}{}{}{}", left, t.write, right, &m.blank), index + 1, new_state),
                 ("RIGHT", _) => machine_step(m, format!("{}{}{}", left, t.write, right), index + 1, new_state),
                 _ => panic!("{}", UNKNOWN_ACTION)
             }
