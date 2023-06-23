@@ -88,7 +88,7 @@ fn check_transition(m: &Machine, name: &String, transition: &Transition) -> Resu
 
 fn check_state_transitions(m: &Machine, name: &String, transitions: &Vec<Transition>) -> Result<(), String> {
     if let Some(duplicated_index) = check_duplicates_on(transitions, |l, r| l.read == r.read) {
-        Err(format!("multiple statement for read [{}] in transition [{}]", transitions[duplicated_index].read, name))
+        Err(format!("two different transitions reads the same character [{}] in the state [{}]", transitions[duplicated_index].read, name))
     } else {
         transitions.iter().try_for_each(|item| check_transition(m, name, item))
     }
